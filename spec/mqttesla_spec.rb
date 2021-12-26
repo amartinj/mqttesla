@@ -61,10 +61,33 @@ describe Mqttesla do
       subject.start(max_retries: max_retries)
     end
 
+    shared_examples 'handles errors' do |error_message|
+      it 'logs the error' do
+        expect_logger_to_receive(:error, error_message)
+
+        subject.start(max_retries: max_retries)
+      end
+
+      it 'does not raise the error' do
+        subject.start(max_retries: max_retries)
+      end
+    end
+
+    context 'and a JSONParser error occurs' do
+      before { expect(JSON).to receive(:parse).and_raise(JSON::ParserError) }
+      it_behaves_like 'handles errors', 'Invalid JSON message!!!'
+    end
+
+    context 'and an unexpected error occurs' do
+      exception = StandardError.new
+      before { expect(message_processor).to receive(:run).and_raise(exception) }
+      it_behaves_like 'handles errors', "Unexpected error: #{exception}"
+    end
+
     private
     def expect_logger_to_receive(level, message)
       expect(logger).to receive(level).with('Mqttesla') do |*_, &block|
-        expect(Proc.new { message }.call).to be(block.call)
+        expect(Proc.new { message }.call).to eq(block.call)
       end.once.ordered
     end
   end

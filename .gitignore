@@ -30,3 +30,6 @@
 
 # Editor metadata
 .idea
+
+# Ruby version
+.ruby-version

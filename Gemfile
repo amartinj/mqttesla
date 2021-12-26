@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '~> 3.1.0'
+ruby '> 2.6.0'
 
 gem 'tesla_api', '~> 3.1.0', git: 'https://github.com/timdorr/tesla-api.git', branch: 'master'
 gem 'mqtt'
